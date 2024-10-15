@@ -1,0 +1,141 @@
+/* dashboard.css */
+body {
+    overflow-x: hidden;
+}
+
+#wrapper {
+    display: flex;
+    width: 100%;
+    align-items: stretch;
+}
+
+#sidebar-wrapper {
+    min-width: 250px;
+    max-width: 250px;
+    background-color: #343a40;
+    transition: all 0.3s;
+    position: relative;
+}
+
+#sidebar-wrapper .sidebar-heading {
+    padding: 1rem;
+    font-size: 1.2rem;
+    background: #343a40;
+    text-align: center;
+}
+
+#sidebar-wrapper .list-group {
+    width: 100%;
+}
+
+#sidebar-wrapper .list-group-item {
+    padding: 15px 20px;
+    font-size: 1.1rem;
+    color: #ffffff;
+}
+
+#sidebar-wrapper .list-group-item:hover {
+    background-color: #0069d9;
+    color: white;
+}
+
+#page-content-wrapper {
+    width: 100%;
+    padding: 20px;
+}
+
+#menu-toggle {
+    position: absolute;
+    top: 50%;
+    right: -20px;
+    transform: translateY(-50%);
+    background-color: #343a40;
+    border: none;
+    outline: none;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+#menu-toggle i {
+    color: white;
+    font-size: 1.2rem;
+}
+
+.toggled #sidebar-wrapper {
+    margin-left: -250px;
+}
+
+.toggled #menu-toggle {
+    right: -20px;
+    transition: right 0.3s ease;
+}
+
+.toggled #page-content-wrapper {
+    margin-left: 0;
+}
+
+
+/* Estilo para la barra de búsqueda */
+.input-group .form-control {
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    padding: 10px;
+    box-shadow: none;
+}
+
+.input-group .form-control:focus {
+    border-color: #007bff;
+    box-shadow: none;
+}
+
+.input-group .input-group-text {
+    border-radius: 5px;
+    background-color: #007bff;
+    color: #fff;
+}
+
+.input-group .input-group-text i {
+    font-size: 1.2rem;
+}
+
+footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background-color: #343a40; /* Color de fondo del pie de página */
+    color: #ffffff; /* Color del texto */
+}
+
+footer a {
+    color: #ffffff; /* Color del enlace */
+    text-decoration: none; /* Elimina el subrayado */
+}
+
+footer a:hover {
+    text-decoration: underline; /* Subrayado al pasar el ratón */
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+#page-content-wrapper {
+    flex: 1;
+}
+
+footer {
+    background-color: #343a40;
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    width: 100%;
+}

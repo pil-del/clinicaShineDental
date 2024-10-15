@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Citas Médicas - SHINE DENTAL</title>
+    <link rel="shortcut icon" type="image/png" href="/images/shine.png">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <style>
+        /* Estilo para los botones de paginación */
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            color: #007bff;
+            background-color: transparent;
+            border: none;
+            padding: 0;
+            margin: 0 5px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        /* Estilo para el botón de la página actual */
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+            font-weight: bold;
+            color: white;
+            background-color: #007bff;
+            border: none;
+            border-radius: 4px;
+        }
+
+        /* Estilo para el botón de paginación al pasar el mouse por encima */
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+            color: white;
+            background-color: #0056b3;
+            border: none;
+            border-radius: 4px;
+        }
+
+        /* Oculta el cuadro de búsqueda predeterminado de DataTables */
+        .dataTables_filter {
+          display: none;
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #page-content-wrapper {
+            flex: 1;
+        }
+
+        footer {
+            position: relative;
+            bottom: 0;
+            width: 100%;
+            background-color: #343a40;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+
+
+    </style>
+</head>
+<body>
+    <div class="d-flex" id="wrapper">
+        <!-- Sidebar -->
+        <div class="bg-dark border-right" id="sidebar-wrapper">
+            <div class="sidebar-heading text-white">
+                <div>
+                    <img src="/images/shine.png" alt="Logo" class="img-fluid mb-2" style="max-width: 50px;">
+                    SHINE DENTAL
+                </div>
+            </div>
+            <div class="list-group list-group-flush">
+                <a href="#clientes-pacientes-submenu" class="list-group-item list-group-item-action bg-dark text-white" data-toggle="collapse">
+                    <i class="fas fa-user"></i> Pacientes
+                </a>
+                <div id="clientes-pacientes-submenu" class="collapse">
+                    <a href="/admin/pacientes" class="list-group-item list-group-item-action bg-dark text-white pl-4">Pacientes</a>
+                    <a href="/admin/citas" class="list-group-item list-group-item-action bg-dark text-white pl-4 active">Citas</a>
+                    <a href="/admin/historial" class="list-group-item list-group-item-action bg-dark text-white pl-4">Historial Tratamiento</a>
+                    <a href="/admin/pago" class="list-group-item list-group-item-action bg-dark text-white pl-4">Control de Pago</a>
+                    <a href="/admin/archivados" class="list-group-item list-group-item-action bg-dark text-white pl-4">Pacientes Archivados</a>
+                </div>
+                <a href="#doctores-submenu" class="list-group-item list-group-item-action bg-dark text-white" data-toggle="collapse">
+                    <i class="fas fa-user-md"></i> Doctores
+                </a>
+                <div id="doctores-submenu" class="collapse">
+                    <a href="/admin/doctores" class="list-group-item list-group-item-action bg-dark text-white pl-4">Doctores</a>
+                    <a href="/admin/usuarios" class="list-group-item list-group-item-action bg-dark text-white pl-4">Usuarios Activos</a>
+                    <a href="/admin/usuariosinactivos" class="list-group-item list-group-item-action bg-dark text-white pl-4">Usuarios Inactivos</a>
+                </div>
+                <a href="#inventario-submenu" class="list-group-item list-group-item-action bg-dark text-white" data-toggle="collapse">
+                    <i class="fas fa-box"></i> Inventario
+                </a>
+                <div id="inventario-submenu" class="collapse">
+                    <a href="/admin/inventario" class="list-group-item list-group-item-action bg-dark text-white pl-4">Inventario</a>
+                    <a href="/admin/compra" class="list-group-item list-group-item-action bg-dark text-white pl-4">Compra</a>
+                </div>
+            
+                <a href="/admin/dashboard" class="list-group-item list-group-item-action bg-dark text-white">
+                    <i class="fas fa-arrow-circle-left"></i> Regresar al Panel
+                </a>
+            
+                <a href="/admin/login" class="list-group-item list-group-item-action bg-danger text-white">
+                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                </a>
+            </div>
+            <!-- Botón de flecha -->
+            <button class="btn btn-dark toggle-btn" id="menu-toggle">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+        </div>
+        <!-- /#sidebar-wrapper -->
+
+        <!-- Contenido de la página principal -->
+        <div id="page-content-wrapper">
+            <div class="container-fluid">
+                <div class="container mt-5">
+                    <h2>Citas Médicas</h2>
+                    <div class="text-left mb-3">
+                        <a href="/admin/dashboard" class="btn btn-secondary">&larr; Regresar al Panel de Control</a>
+                        <button class="btn btn-primary" data-toggle="modal" data-target="#addcitaModal">Agregar Cita</button>
+                    </div>
+
+                    <!-- Filtro para las citas -->
+                    <div class="card p-3 mb-4">
+                        <h5>Filtrar Citas:</h5>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="filtro" id="todas" value="todas" checked>
+                            <label class="form-check-label" for="todas">Todas</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="filtro" id="rangoFecha" value="rangoFecha">
+                            <label class="form-check-label" for="rangoFecha">Por Rango de Fecha</label>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="fechaInicio">Fecha Inicio:</label>
+                                <input type="date" class="form-control" id="fechaInicio">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="fechaFin">Fecha Fin:</label>
+                                <input type="date" class="form-control" id="fechaFin">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="estadoCita">Estado de Cita:</label>
+                            <select id="estadoCita" class="form-control">
+                                <option value="todas">Todas</option>
+                                <option value="atendida">Atendida</option>
+                                <option value="pendiente">Pendiente</option>
+                                <option value="cancelada">Cancelada</option>
+                            </select>
+                        </div>
+
+                        <button class="btn btn-success" id="buscarCitas">Buscar Citas</button>
+                    </div>
+
+                    <!-- Tabla de Citas -->
+<div class="card">
+    <div class="card-body">
+        <table class="table table-bordered" id="citasTable">
+            <thead>
+                <tr>
+                    <th>ID Cita</th>
+                    <th>Fecha Cita</th>
+                    <th>Hora Atención</th>
+                    <th>Motivo de la Cita</th>
+                    <th>Notas Adicionales</th>
+                    <th>Fecha Registro</th>
+                    <th>Fecha Actualización</th>
+                    <th>Paciente</th>
+                    <th>Doctor</th>
+                    <th>Estado de la Reserva</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (citas && citas.length > 0) { %>
+                    <% citas.forEach(function(cita) { %>
+                        <tr>
+                            <td><%= cita.idcita %></td>
+                            <td><%= cita.fechaCita %></td>
+                            <td><%= cita.horaCita %></td>
+                            <td><%= cita.motivoCita %></td>
+                            <td><%= cita.notasAdicionales %></td>
+                            <td><%= cita.fechaCreacion %></td>
+                            <td><%= cita.fechaActualizacion %></td>
+                            <td><%= cita.nombrePaciente %></td>
+                            <td><%= cita.nombreDoctor %></td>
+                            <td><%= cita.estadoCita %></td>
+                            <td>
+                                <button class="btn btn-success btn-sm" onclick="cambiarEstado('<%= cita.idcita %>', 1)">Atendida</button>
+                                <button class="btn btn-danger btn-sm" onclick="cambiarEstado('<%= cita.idcita %>', 3)">Cancelada</button>
+                            </td>
+                        </tr>
+                    <% }); %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="11">No hay citas disponibles.</td>
+                    </tr>
+                <% } %>
+            </tbody>                                                              
+        </table>
+    </div>
+</div>
+
+
+                    <!-- Botón para exportar el reporte a PDF -->
+                    <button class="btn btn-primary mt-3" id="exportarPDF">Exportar a PDF</button>
+                </div>
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+    </div>
+    <!-- /#wrapper -->
+
+    <!-- Modal para Agregar Cita -->
+<div class="modal fade" id="addcitaModal" tabindex="-1" role="dialog" aria-labelledby="addcitaModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addcitaModalLabel">Agregar Nueva Cita</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="formAgregarCita">
+                    <div class="form-group">
+                        <label for="fechaCita">Fecha de la Cita</label>
+                        <input type="date" class="form-control" id="fechaCita" name="fechaCita" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="horaCita">Hora de la Cita</label>
+                        <input type="time" class="form-control" id="horaCita" name="horaCita" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="motivoCita">Motivo de la Cita</label>
+                        <input type="text" class="form-control" id="motivoCita" name="motivoCita" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="notasAdicionales">Notas Adicionales</label>
+                        <textarea class="form-control" id="notasAdicionales" name="notasAdicionales" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="paciente">Paciente:</label>
+                        <select id="paciente" name="paciente_idPaciente" class="form-control">
+                                <option value="">Seleccionar Paciente</option>
+                                <% pacientes.forEach(function(paciente) { %>
+                                    <option value="<%= paciente.idPaciente %>"><%= paciente.nombre + " " + paciente.apellido %></option>
+                                <% }); %>
+                            </select>
+                            
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="doctor">Doctor:</label>
+                        <select id="doctor" name="doctor_id" class="form-control">
+                            <option value="">Seleccione un Doctor</option>
+                            <% doctores.forEach(function(doctor) { %>
+                                <option value="<%= doctor.iddoctor %>"><%= doctor.nombre + " " + doctor.apellido %></option>
+                            <% }); %>
+                        </select>                        
+                        </select>
+                    </div>
+                    
+                    
+                    <div class="form-group">
+                        <label for="estadoCita_idestadoCita">Estado de la Cita</label>
+                        <select class="form-control" id="estadoCita_idestadoCita" name="estadoCita_idestadoCita" required>
+                            <option value="">Seleccionar Estado</option>
+                            <option value="1">Pendiente</option>
+                            <option value="2">Atendida</option>
+                            <option value="3">Cancelada</option>
+                            <!-- Más estados si es necesario -->
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="guardarCita">Guardar Cita</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- Pie de página -->
+    <footer class="bg-dark text-white text-center py-3">
+        <p class="mb-0">&copy; 2024 SHINE DENTAL. Todos los derechos reservados.</p>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.13/jspdf.plugin.autotable.min.js"></script>
+
+    <script>
+        async function obtenerPacientes() {
+    try {
+        // Example of fetching patients from the database
+        const pacientes = await db.query('SELECT * FROM paciente');
+        return pacientes;
+    } catch (error) {
+        console.error('Error fetching patients:', error);
+        throw error;
+    }
+}
+
+async function obtenerDoctores() {
+    try {
+        // Example of fetching doctors from the database
+        const doctores = await db.query('SELECT * FROM doctor');
+        return doctores;
+    } catch (error) {
+        console.error('Error fetching doctors:', error);
+        throw error;
+    }
+}
+
+        // Funcionalidad del botón para ocultar/mostrar el menú
+        $("#menu-toggle").click(function(e) {
+            e.preventDefault();
+            $("#wrapper").toggleClass("toggled");
+            $(this).find("i").toggleClass("fa-chevron-left fa-chevron-right");
+        });
+
+        // Exportar la tabla de citas médicas a PDF
+        const { jsPDF } = window.jspdf;
+
+        document.getElementById('exportarPDF').addEventListener('click', function () {
+            const doc = new jsPDF();
+            doc.text("Citas Médicas", 10, 10);
+
+            const citasTable = document.getElementById("citasTable");
+            let data = [];
+
+            for (let i = 1; i < citasTable.rows.length; i++) {
+                let row = [];
+                for (let j = 0; j < citasTable.rows[i].cells.length; j++) {
+                    row.push(citasTable.rows[i].cells[j].innerText);
+                }
+                data.push(row);
+            }
+
+            doc.autoTable({
+                head: [['Fecha Cita', 'Hora Atención', 'Paciente', 'Médico', 'Estado Reserva', 'Fecha Registro']],
+                body: data
+            });
+
+            doc.save('citas-medicas.pdf');
+        });
+
+        // Evento para guardar la cita cuando se presiona el botón "Guardar Cita"
+    document.getElementById('guardarCita').addEventListener('click', function() {
+        const form = document.getElementById('formAgregarCita');
+        if (form.checkValidity()) {
+            // Recoger los datos del formulario
+            const formData = new FormData(form);
+            // Lógica para enviar los datos al servidor (por ejemplo, mediante AJAX)
+            // Ejemplo de envío:
+            // fetch('/ruta-para-guardar-cita', {
+            //     method: 'POST',
+            //     body: formData
+            // }).then(response => response.json())
+            //   .then(data => {
+            //       // Manejar la respuesta del servidor
+            //       $('#addcitaModal').modal('hide');
+            //       // Actualizar la tabla de citas
+            //   });
+            alert('Cita guardada exitosamente.'); // Este es un ejemplo, reemplazar con la lógica real.
+            $('#addcitaModal').modal('hide');
+        } else {
+            form.reportValidity();
+        }
+    });
+
+    </script>
+</body>
+</html>
